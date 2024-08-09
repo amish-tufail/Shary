@@ -7,18 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		04BD4E072C661074009CBB1D /* insta-video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 04BD4E062C661074009CBB1D /* insta-video.mp4 */; };
+		04BD4E092C661A1F009CBB1D /* sample.MOV in Resources */ = {isa = PBXBuildFile; fileRef = 04BD4E082C661A1F009CBB1D /* sample.MOV */; };
+		04CF8DB82C623F8400E20AF2 /* SnapSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 04CF8DB72C623F8400E20AF2 /* SnapSDK */; };
 		04F7FAD22C61D79400226FF7 /* ShareToInstaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04F7FAD12C61D79400226FF7 /* ShareToInstaApp.swift */; };
 		04F7FAD42C61D79400226FF7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04F7FAD32C61D79400226FF7 /* ContentView.swift */; };
 		04F7FAD62C61D79500226FF7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04F7FAD52C61D79500226FF7 /* Assets.xcassets */; };
 		04F7FAD92C61D79500226FF7 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04F7FAD82C61D79500226FF7 /* Preview Assets.xcassets */; };
+		04F7FAE22C61DE2D00226FF7 /* FacebookAEM in Frameworks */ = {isa = PBXBuildFile; productRef = 04F7FAE12C61DE2D00226FF7 /* FacebookAEM */; };
+		04F7FAE42C61DE2D00226FF7 /* FacebookBasics in Frameworks */ = {isa = PBXBuildFile; productRef = 04F7FAE32C61DE2D00226FF7 /* FacebookBasics */; };
+		04F7FAE62C61DE2D00226FF7 /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = 04F7FAE52C61DE2D00226FF7 /* FacebookCore */; };
+		04F7FAE92C61E01C00226FF7 /* FacebookShare in Frameworks */ = {isa = PBXBuildFile; productRef = 04F7FAE82C61E01C00226FF7 /* FacebookShare */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		04BD4E062C661074009CBB1D /* insta-video.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "insta-video.mp4"; sourceTree = "<group>"; };
+		04BD4E082C661A1F009CBB1D /* sample.MOV */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = sample.MOV; sourceTree = "<group>"; };
 		04F7FACE2C61D79400226FF7 /* ShareToInsta.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShareToInsta.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		04F7FAD12C61D79400226FF7 /* ShareToInstaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareToInstaApp.swift; sourceTree = "<group>"; };
 		04F7FAD32C61D79400226FF7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		04F7FAD52C61D79500226FF7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		04F7FAD82C61D79500226FF7 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		04F7FADF2C61D9BB00226FF7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		04F7FAE72C61DE4600226FF7 /* ShareToInsta.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShareToInsta.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -26,6 +37,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04F7FAE22C61DE2D00226FF7 /* FacebookAEM in Frameworks */,
+				04F7FAE62C61DE2D00226FF7 /* FacebookCore in Frameworks */,
+				04CF8DB82C623F8400E20AF2 /* SnapSDK in Frameworks */,
+				04F7FAE92C61E01C00226FF7 /* FacebookShare in Frameworks */,
+				04F7FAE42C61DE2D00226FF7 /* FacebookBasics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,8 +67,12 @@
 		04F7FAD02C61D79400226FF7 /* ShareToInsta */ = {
 			isa = PBXGroup;
 			children = (
+				04F7FAE72C61DE4600226FF7 /* ShareToInsta.entitlements */,
+				04F7FADF2C61D9BB00226FF7 /* Info.plist */,
 				04F7FAD12C61D79400226FF7 /* ShareToInstaApp.swift */,
 				04F7FAD32C61D79400226FF7 /* ContentView.swift */,
+				04BD4E062C661074009CBB1D /* insta-video.mp4 */,
+				04BD4E082C661A1F009CBB1D /* sample.MOV */,
 				04F7FAD52C61D79500226FF7 /* Assets.xcassets */,
 				04F7FAD72C61D79500226FF7 /* Preview Content */,
 			);
@@ -83,6 +103,13 @@
 			dependencies = (
 			);
 			name = ShareToInsta;
+			packageProductDependencies = (
+				04F7FAE12C61DE2D00226FF7 /* FacebookAEM */,
+				04F7FAE32C61DE2D00226FF7 /* FacebookBasics */,
+				04F7FAE52C61DE2D00226FF7 /* FacebookCore */,
+				04F7FAE82C61E01C00226FF7 /* FacebookShare */,
+				04CF8DB72C623F8400E20AF2 /* SnapSDK */,
+			);
 			productName = ShareToInsta;
 			productReference = 04F7FACE2C61D79400226FF7 /* ShareToInsta.app */;
 			productType = "com.apple.product-type.application";
@@ -111,6 +138,10 @@
 				Base,
 			);
 			mainGroup = 04F7FAC52C61D79400226FF7;
+			packageReferences = (
+				04F7FAE02C61DE2D00226FF7 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
+				04CF8DB62C623F8400E20AF2 /* XCRemoteSwiftPackageReference "snap-kit-spm" */,
+			);
 			productRefGroup = 04F7FACF2C61D79400226FF7 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -125,8 +156,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04BD4E092C661A1F009CBB1D /* sample.MOV in Resources */,
 				04F7FAD92C61D79500226FF7 /* Preview Assets.xcassets in Resources */,
 				04F7FAD62C61D79500226FF7 /* Assets.xcassets in Resources */,
+				04BD4E072C661074009CBB1D /* insta-video.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,12 +302,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ShareToInsta/ShareToInsta.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ShareToInsta/Preview Content\"";
 				DEVELOPMENT_TEAM = DM99567GG6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ShareToInsta/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -298,12 +333,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ShareToInsta/ShareToInsta.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ShareToInsta/Preview Content\"";
 				DEVELOPMENT_TEAM = DM99567GG6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ShareToInsta/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -344,6 +381,53 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		04CF8DB62C623F8400E20AF2 /* XCRemoteSwiftPackageReference "snap-kit-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Snapchat/snap-kit-spm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.0;
+			};
+		};
+		04F7FAE02C61DE2D00226FF7 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/facebook/facebook-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 14.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		04CF8DB72C623F8400E20AF2 /* SnapSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04CF8DB62C623F8400E20AF2 /* XCRemoteSwiftPackageReference "snap-kit-spm" */;
+			productName = SnapSDK;
+		};
+		04F7FAE12C61DE2D00226FF7 /* FacebookAEM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04F7FAE02C61DE2D00226FF7 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookAEM;
+		};
+		04F7FAE32C61DE2D00226FF7 /* FacebookBasics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04F7FAE02C61DE2D00226FF7 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookBasics;
+		};
+		04F7FAE52C61DE2D00226FF7 /* FacebookCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04F7FAE02C61DE2D00226FF7 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookCore;
+		};
+		04F7FAE82C61E01C00226FF7 /* FacebookShare */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04F7FAE02C61DE2D00226FF7 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookShare;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 04F7FAC62C61D79400226FF7 /* Project object */;
 }

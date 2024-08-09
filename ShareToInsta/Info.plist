@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>instagram-stories</string>
+		<string>instagram-reels</string>
+		<string>facebook-stories</string>
+		<string>fbapi</string>
+		<string>snapchat</string>
+		<string>itms-apps</string>
+		<string>bitmoji-sdk</string>
+	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>512742294571294</string>
+				<string>shareToInsta</string>
+			</array>
+		</dict>
+	</array>
+	<key>FacebookAppID</key>
+	<string>512742294571294</string>
+	<key>FacebookClientToken</key>
+	<string>a82a97539e9e4aaa67d6f8837aee7d23</string>
+	<key>FacebookDisplayName</key>
+	<string>ShareToStories</string>
+	<key>SCSDKClientId</key>
+	<string>63560e13-480c-47d9-b506-ad5baaad81ba</string>
+	<key>SCSDKRedirectUrl</key>
+	<string>shareToInsta://myapp</string>
+	<key>SCSDKScopes</key>
+	<array>
+		<string>https://auth.snapchat.com/oauth2/api/user.external_id</string>
+		<string>https://auth.snapchat.com/oauth2/api/user.display_name</string>
+		<string>https://auth.snapchat.com/oauth2/api/user.bitmoji.avatar</string>
+	</array>
+</dict>
+</plist>
