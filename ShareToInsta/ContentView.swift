@@ -174,39 +174,213 @@ struct ContentView: View {
             }
             
             
-            Button(action: {
-                shareSpotifyViewToFacebook()
-            }) {
-                Text("Share to Facebook Stories")
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
+            HStack {
+                Button(action: {
+                    shareSpotifyViewToFacebook()
+                }) {
+                    Text("FB STORY")
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                
+                Button(action: {
+                    shareInFacebookFeed()
+                }) {
+                    Text("FB")
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                
+                Button(action: {
+                    shareVideoWithSpotifyStickerToFacebookReels()
+                }) {
+                    Text("FB REEL")
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                
+                Button(action: {
+                    shareVideoWithSpotifyStickerToFacebookStories()
+                }) {
+                    Text("FB STORY-MUSIC")
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
             }
             
-            Button(action: {
-                shareInFacebookFeed()
-            }) {
-                Text("Share to Facebook Feed")
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
+            HStack {
+                Button(action: {
+                          shareToSnapchat()
+                      }) {
+                          Text("SC Story")
+                              .padding()
+                              .background(Color.blue)
+                              .foregroundColor(.white)
+                              .cornerRadius(8)
+                      }
+                
+                Button(action: {
+                    shareVideoWithSpotifyStickerToSnapchatStories()
+                }) {
+                    Text("SC Story-MUSIC")
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
             }
-            
-            Button(action: {
-                      shareToSnapchat()
-                  }) {
-                      Text("Share to Snapchat Stories")
-                          .padding()
-                          .background(Color.blue)
-                          .foregroundColor(.white)
-                          .cornerRadius(8)
-                  }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .gradientBackground(from: image)
     }
+    
+    func shareVideoWithSpotifyStickerToSnapchatStories() {
+        // Identify your video content
+        guard let videoURL = Bundle.main.url(forResource: "sample", withExtension: "MOV"),
+              let videoData = try? Data(contentsOf: videoURL) else {
+            print("Failed to find or load video file.")
+            return
+        }
+        
+        // Convert your SpotifyShareView to an image (optional sticker)
+        let spotifyShareView = SpotifyShareView().frame(width: 300, height: 400)
+        let stickerImage = spotifyShareView.snapshot()
+        
+        guard let stickerImageData = stickerImage.pngData() else {
+            print("Failed to convert Spotify view to PNG data.")
+            return
+        }
+        
+        // Create Snapchat video content
+        let snapVideo = SCSDKSnapVideo(videoUrl: videoURL)
+        let snapVideoContent = SCSDKVideoSnapContent(snapVideo: snapVideo)
+        
+        // Set optional sticker
+        let snapSticker = SCSDKSnapSticker(stickerImage: stickerImage)
+        snapVideoContent.sticker = snapSticker
+        
+        // Attach caption or other metadata if needed
+        snapVideoContent.caption = "Check out this cool video!"
+        
+        // Send the content to Snapchat
+        let api = SCSDKSnapAPI(content: snapVideoContent)
+        api.startSnapping { error in
+            if let error = error {
+                print("Failed to share to Snapchat: \(error.localizedDescription)")
+            } else {
+                print("Successfully shared to Snapchat!")
+            }
+        }
+    }
+    //--------
+    
+    func shareVideoWithSpotifyStickerToFacebookStories() {
+        // Identify your App ID
+        let appIDString = "512742294571294"
+        
+        // Identify your video content
+        guard let videoURL = Bundle.main.url(forResource: "sample", withExtension: "MOV"),
+              let backgroundVideoData = try? Data(contentsOf: videoURL) else {
+            print("Failed to find or load video file.")
+            return
+        }
+        
+        // Convert your SpotifyShareView to an image (optional sticker)
+        let spotifyShareView = SpotifyShareView().frame(width: 300, height: 400)
+        let stickerImage = spotifyShareView.snapshot()
+        
+        guard let stickerImageData = stickerImage.pngData() else {
+            print("Failed to convert Spotify view to PNG data.")
+            return
+        }
+        
+        // Call method to share video with Spotify sticker to Facebook Stories
+        backgroundVideoWithStickerToFacebookStories(backgroundVideoData: backgroundVideoData, stickerImageData: stickerImageData, appID: appIDString)
+    }
+
+    // Method to share video with Spotify sticker to Facebook Stories
+    func backgroundVideoWithStickerToFacebookStories(backgroundVideoData: Data, stickerImageData: Data, appID: String) {
+        if let urlScheme = URL(string: "facebook-stories://share"), UIApplication.shared.canOpenURL(urlScheme) {
+            // Add background video, sticker, and appID to pasteboard items
+            let pasteboardItems: [String: Any] = [
+                "com.facebook.sharedSticker.backgroundVideo": backgroundVideoData,
+                "com.facebook.sharedSticker.stickerImage": stickerImageData,
+                "com.facebook.sharedSticker.appID": appID
+            ]
+            
+            // Set pasteboard options
+            let pasteboardOptions = [UIPasteboard.OptionsKey.expirationDate: Date().addingTimeInterval(60 * 5)]
+            
+            // Attach the pasteboard items
+            UIPasteboard.general.setItems([pasteboardItems], options: pasteboardOptions)
+            
+            // Open Facebook Stories
+            UIApplication.shared.open(urlScheme, options: [:], completionHandler: nil)
+            
+        } else {
+            print("Facebook Stories is not installed or URL scheme is incorrect.")
+        }
+    }
+    
+    // -----------
+    
+    func shareVideoWithSpotifyStickerToFacebookReels() {
+        // Identify your App ID
+        let appIDString = "512742294571294"
+        
+        // Identify your video content
+        guard let videoURL = Bundle.main.url(forResource: "sample", withExtension: "MOV"),
+              let backgroundVideoData = try? Data(contentsOf: videoURL) else {
+            print("Failed to find or load video file.")
+            return
+        }
+        
+        // Convert your SpotifyShareView to an image (optional sticker)
+        let spotifyShareView = SpotifyShareView().frame(width: 300, height: 400)
+        let stickerImage = spotifyShareView.snapshot()
+        
+        guard let stickerImageData = stickerImage.pngData() else {
+            print("Failed to convert Spotify view to PNG data.")
+            return
+        }
+        
+        // Call method to share video with Spotify sticker to Facebook Reels
+        backgroundVideoWithStickerToFacebookReels(backgroundVideoData: backgroundVideoData, stickerImageData: stickerImageData, appID: appIDString)
+    }
+
+    // Method to share video with Spotify sticker to Facebook Reels
+    func backgroundVideoWithStickerToFacebookReels(backgroundVideoData: Data, stickerImageData: Data, appID: String) {
+        if let urlScheme = URL(string: "facebook-reels://share"), UIApplication.shared.canOpenURL(urlScheme) {
+            // Add background video, sticker, and appID to pasteboard items
+            let pasteboardItems: [[String: Any]] = [
+                ["com.facebook.sharedSticker.backgroundVideo": backgroundVideoData],
+                ["com.facebook.sharedSticker.stickerImage": stickerImageData],
+                ["com.facebook.sharedSticker.appID": appID]
+            ]
+            
+            // Set pasteboard options
+            let pasteboardOptions = [UIPasteboard.OptionsKey.expirationDate: Date().addingTimeInterval(60 * 5)]
+            
+            // Attach the pasteboard items
+            UIPasteboard.general.setItems(pasteboardItems, options: pasteboardOptions)
+            
+            // Open Facebook Reels
+            UIApplication.shared.open(urlScheme, options: [:], completionHandler: nil)
+            
+        } else {
+            print("Facebook Reels is not installed or URL scheme is incorrect.")
+        }
+    }
+    
+    // ------------
     
     func shareVideoWithSpotifyStickerToInstagramStories() {
         // Identify your App ID
