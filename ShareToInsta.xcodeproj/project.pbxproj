@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		04BD4E072C661074009CBB1D /* insta-video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 04BD4E062C661074009CBB1D /* insta-video.mp4 */; };
 		04BD4E092C661A1F009CBB1D /* sample.MOV in Resources */ = {isa = PBXBuildFile; fileRef = 04BD4E082C661A1F009CBB1D /* sample.MOV */; };
+		04BD4E1D2C69D237009CBB1D /* back-video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 04BD4E1C2C69D237009CBB1D /* back-video.mp4 */; };
+		04BD4E1F2C69D35D009CBB1D /* back-music.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 04BD4E1E2C69D35D009CBB1D /* back-music.mp3 */; };
 		04CF8DB82C623F8400E20AF2 /* SnapSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 04CF8DB72C623F8400E20AF2 /* SnapSDK */; };
 		04F7FAD22C61D79400226FF7 /* ShareToInstaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04F7FAD12C61D79400226FF7 /* ShareToInstaApp.swift */; };
 		04F7FAD42C61D79400226FF7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04F7FAD32C61D79400226FF7 /* ContentView.swift */; };
@@ -23,6 +25,8 @@
 /* Begin PBXFileReference section */
 		04BD4E062C661074009CBB1D /* insta-video.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "insta-video.mp4"; sourceTree = "<group>"; };
 		04BD4E082C661A1F009CBB1D /* sample.MOV */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = sample.MOV; sourceTree = "<group>"; };
+		04BD4E1C2C69D237009CBB1D /* back-video.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "back-video.mp4"; sourceTree = "<group>"; };
+		04BD4E1E2C69D35D009CBB1D /* back-music.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "back-music.mp3"; sourceTree = "<group>"; };
 		04F7FACE2C61D79400226FF7 /* ShareToInsta.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShareToInsta.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		04F7FAD12C61D79400226FF7 /* ShareToInstaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareToInstaApp.swift; sourceTree = "<group>"; };
 		04F7FAD32C61D79400226FF7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -71,6 +75,8 @@
 				04F7FADF2C61D9BB00226FF7 /* Info.plist */,
 				04F7FAD12C61D79400226FF7 /* ShareToInstaApp.swift */,
 				04F7FAD32C61D79400226FF7 /* ContentView.swift */,
+				04BD4E1E2C69D35D009CBB1D /* back-music.mp3 */,
+				04BD4E1C2C69D237009CBB1D /* back-video.mp4 */,
 				04BD4E062C661074009CBB1D /* insta-video.mp4 */,
 				04BD4E082C661A1F009CBB1D /* sample.MOV */,
 				04F7FAD52C61D79500226FF7 /* Assets.xcassets */,
@@ -158,8 +164,10 @@
 			files = (
 				04BD4E092C661A1F009CBB1D /* sample.MOV in Resources */,
 				04F7FAD92C61D79500226FF7 /* Preview Assets.xcassets in Resources */,
+				04BD4E1D2C69D237009CBB1D /* back-video.mp4 in Resources */,
 				04F7FAD62C61D79500226FF7 /* Assets.xcassets in Resources */,
 				04BD4E072C661074009CBB1D /* insta-video.mp4 in Resources */,
+				04BD4E1F2C69D35D009CBB1D /* back-music.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -14,6 +14,11 @@ import CoreImage.CIFilterBuiltins
 import SCSDKCoreKit
 import SCSDKCreativeKit
 
+import UIKit
+import AVFoundation
+import AVKit
+import AssetsLibrary
+
 extension View {
     func snapshot() -> UIImage {
         let controller = UIHostingController(rootView: self)
@@ -242,6 +247,172 @@ struct ContentView: View {
         .gradientBackground(from: image)
     }
     
+    func createVideoFromImage(image: UIImage, duration: Int = 15, completion: @escaping (URL?) -> Void) {
+        let assetWriterSettings = [
+            AVVideoCodecKey: AVVideoCodecType.h264,
+            AVVideoWidthKey: 1080,
+            AVVideoHeightKey: 1920
+        ] as [String : Any]
+        
+        guard let outputMovieURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("imageToVideo.mov") else {
+            completion(nil)
+            return
+        }
+        
+        // Delete old file if it exists
+        try? FileManager.default.removeItem(at: outputMovieURL)
+        
+        do {
+            let assetWriter = try AVAssetWriter(outputURL: outputMovieURL, fileType: .mov)
+            let assetWriterInput = AVAssetWriterInput(mediaType: .video, outputSettings: assetWriterSettings)
+            let assetWriterAdaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: assetWriterInput, sourcePixelBufferAttributes: nil)
+            
+            assetWriter.add(assetWriterInput)
+            assetWriter.startWriting()
+            assetWriter.startSession(atSourceTime: .zero)
+            
+            let framesPerSecond = 1
+            let totalFrames = duration * framesPerSecond
+            var frameCount = 0
+            
+            let attrs = [
+                kCVPixelBufferCGImageCompatibilityKey: kCFBooleanTrue,
+                kCVPixelBufferCGBitmapContextCompatibilityKey: kCFBooleanTrue
+            ] as CFDictionary
+            
+            var pixelBuffer: CVPixelBuffer?
+            let width = Int(image.size.width)
+            let height = Int(image.size.height)
+            
+            CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, attrs, &pixelBuffer)
+            
+            let context = CIContext()
+            let ciImage = CIImage(image: image)
+            
+            while frameCount < totalFrames {
+                if assetWriterInput.isReadyForMoreMediaData {
+                    let frameTime = CMTimeMake(value: Int64(frameCount), timescale: Int32(framesPerSecond))
+                    context.render(ciImage!, to: pixelBuffer!)
+                    assetWriterAdaptor.append(pixelBuffer!, withPresentationTime: frameTime)
+                    frameCount += 1
+                }
+            }
+            
+            assetWriterInput.markAsFinished()
+            assetWriter.finishWriting {
+                completion(outputMovieURL)
+            }
+        } catch {
+            print("Error creating video from image: \(error)")
+            completion(nil)
+        }
+    }
+
+    
+    // ---
+    func mergeVideoAndAudio(videoUrl: URL,
+                            audioUrl: URL,
+                            shouldFlipHorizontally: Bool = false,
+                            completion: @escaping (_ error: Error?, _ url: URL?) -> Void) {
+
+        let mixComposition = AVMutableComposition()
+        var mutableCompositionVideoTrack = [AVMutableCompositionTrack]()
+        var mutableCompositionAudioTrack = [AVMutableCompositionTrack]()
+        var mutableCompositionAudioOfVideoTrack = [AVMutableCompositionTrack]()
+
+        //start merge
+
+        let aVideoAsset = AVAsset(url: videoUrl)
+        let aAudioAsset = AVAsset(url: audioUrl)
+
+        let compositionAddVideo = mixComposition.addMutableTrack(withMediaType: AVMediaType.video,
+                                                                 preferredTrackID: kCMPersistentTrackID_Invalid)!
+
+        let compositionAddAudio = mixComposition.addMutableTrack(withMediaType: AVMediaType.audio,
+                                                                 preferredTrackID: kCMPersistentTrackID_Invalid)!
+
+        let compositionAddAudioOfVideo = mixComposition.addMutableTrack(withMediaType: AVMediaType.audio,
+                                                                        preferredTrackID: kCMPersistentTrackID_Invalid)!
+
+        let aVideoAssetTrack: AVAssetTrack = aVideoAsset.tracks(withMediaType: AVMediaType.video)[0]
+        let aAudioOfVideoAssetTrack: AVAssetTrack? = aVideoAsset.tracks(withMediaType: AVMediaType.audio).first
+        let aAudioAssetTrack: AVAssetTrack = aAudioAsset.tracks(withMediaType: AVMediaType.audio)[0]
+
+        // Default must have tranformation
+        compositionAddVideo.preferredTransform = aVideoAssetTrack.preferredTransform
+
+        if shouldFlipHorizontally {
+            // Flip video horizontally
+            var frontalTransform: CGAffineTransform = CGAffineTransform(scaleX: -1.0, y: 1.0)
+            frontalTransform = frontalTransform.translatedBy(x: -aVideoAssetTrack.naturalSize.width, y: 0.0)
+            frontalTransform = frontalTransform.translatedBy(x: 0.0, y: -aVideoAssetTrack.naturalSize.width)
+            compositionAddVideo.preferredTransform = frontalTransform
+        }
+
+        mutableCompositionVideoTrack.append(compositionAddVideo)
+        mutableCompositionAudioTrack.append(compositionAddAudio)
+        mutableCompositionAudioOfVideoTrack.append(compositionAddAudioOfVideo)
+
+        do {
+            try mutableCompositionVideoTrack[0].insertTimeRange(CMTimeRangeMake(start: CMTime.zero,
+                                                                                duration: aVideoAssetTrack.timeRange.duration),
+                                                                of: aVideoAssetTrack,
+                                                                at: CMTime.zero)
+
+            //In my case my audio file is longer then video file so i took videoAsset duration
+            //instead of audioAsset duration
+            try mutableCompositionAudioTrack[0].insertTimeRange(CMTimeRangeMake(start: CMTime.zero,
+                                                                                duration: aVideoAssetTrack.timeRange.duration),
+                                                                of: aAudioAssetTrack,
+                                                                at: CMTime.zero)
+
+            // adding audio (of the video if exists) asset to the final composition
+            if let aAudioOfVideoAssetTrack = aAudioOfVideoAssetTrack {
+                try mutableCompositionAudioOfVideoTrack[0].insertTimeRange(CMTimeRangeMake(start: CMTime.zero,
+                                                                                           duration: aVideoAssetTrack.timeRange.duration),
+                                                                           of: aAudioOfVideoAssetTrack,
+                                                                           at: CMTime.zero)
+            }
+        } catch {
+            DispatchQueue.main.async {
+                completion(error, nil)
+            }
+            return
+        }
+
+        // Exporting
+        let savePathUrl: URL = URL(fileURLWithPath: NSHomeDirectory() + "/Documents/newVideo.mp4")
+        do { // delete old video
+            try FileManager.default.removeItem(at: savePathUrl)
+        } catch { print(error.localizedDescription) }
+
+        let assetExport: AVAssetExportSession = AVAssetExportSession(asset: mixComposition, presetName: AVAssetExportPresetHighestQuality)!
+        assetExport.outputFileType = AVFileType.mp4
+        assetExport.outputURL = savePathUrl
+        assetExport.shouldOptimizeForNetworkUse = true
+
+        assetExport.exportAsynchronously { () -> Void in
+            DispatchQueue.main.async {
+                switch assetExport.status {
+                case AVAssetExportSession.Status.completed:
+                    print("success")
+                    completion(nil, savePathUrl)
+                case AVAssetExportSession.Status.failed:
+                    print("failed \(assetExport.error?.localizedDescription ?? "error nil")")
+                    completion(assetExport.error, nil)
+                case AVAssetExportSession.Status.cancelled:
+                    print("cancelled \(assetExport.error?.localizedDescription ?? "error nil")")
+                    completion(assetExport.error, nil)
+                default:
+                    print("complete")
+                    completion(assetExport.error, nil)
+                }
+            }
+        }
+    }
+
+    
+    // --------------
     func shareVideoWithSpotifyStickerToSnapchatStories() {
         // Identify your video content
         guard let videoURL = Bundle.main.url(forResource: "sample", withExtension: "MOV"),
@@ -283,28 +454,76 @@ struct ContentView: View {
     //--------
     
     func shareVideoWithSpotifyStickerToFacebookStories() {
-        // Identify your App ID
         let appIDString = "512742294571294"
         
-        // Identify your video content
-        guard let videoURL = Bundle.main.url(forResource: "sample", withExtension: "MOV"),
-              let backgroundVideoData = try? Data(contentsOf: videoURL) else {
-            print("Failed to find or load video file.")
-            return
+        // The image you want to convert into a video
+        let backgroundImage = UIImage(named: "black-image")!
+        
+        // Create a video from the still image
+        createVideoFromImage(image: backgroundImage, duration: 15) { videoURL in
+            guard let videoURL = videoURL else {
+                print("Failed to create video from image.")
+                return
+            }
+            
+            // The audio file you want to merge with the video
+            guard let audioURL = Bundle.main.url(forResource: "back-music", withExtension: "mp3") else {
+                print("Failed to find audio file.")
+                return
+            }
+            
+            // Merge the video with the audio
+            mergeVideoAndAudio(videoUrl: videoURL, audioUrl: audioURL, shouldFlipHorizontally: false) { error, mergedVideoURL in
+                if let error = error {
+                    print("Failed to merge video and audio: \(error.localizedDescription)")
+                    return
+                }
+                
+                guard let mergedVideoURL = mergedVideoURL,
+                      let backgroundVideoData = try? Data(contentsOf: mergedVideoURL) else {
+                    print("Failed to load merged video.")
+                    return
+                }
+                
+                // Convert your SpotifyShareView to an image (optional sticker)
+                let spotifyShareView = SpotifyShareView().frame(width: 300, height: 400)
+                let stickerImage = spotifyShareView.snapshot()
+                
+                guard let stickerImageData = stickerImage.pngData() else {
+                    print("Failed to convert Spotify view to PNG data.")
+                    return
+                }
+                
+                // Call method to share video with Spotify sticker to Facebook Stories
+                backgroundVideoWithStickerToFacebookStories(backgroundVideoData: backgroundVideoData, stickerImageData: stickerImageData, appID: appIDString)
+            }
         }
-        
-        // Convert your SpotifyShareView to an image (optional sticker)
-        let spotifyShareView = SpotifyShareView().frame(width: 300, height: 400)
-        let stickerImage = spotifyShareView.snapshot()
-        
-        guard let stickerImageData = stickerImage.pngData() else {
-            print("Failed to convert Spotify view to PNG data.")
-            return
-        }
-        
-        // Call method to share video with Spotify sticker to Facebook Stories
-        backgroundVideoWithStickerToFacebookStories(backgroundVideoData: backgroundVideoData, stickerImageData: stickerImageData, appID: appIDString)
     }
+
+    // Normal Music
+//    func shareVideoWithSpotifyStickerToFacebookStories() {
+//        // Identify your App ID
+//        let appIDString = "512742294571294"
+//        
+//        // Identify your video content
+//        guard let videoURL = Bundle.main.url(forResource: "sample", withExtension: "MOV"),
+//              let backgroundVideoData = try? Data(contentsOf: videoURL) else {
+//            print("Failed to find or load video file.")
+//            return
+//        }
+//        
+//        // Convert your SpotifyShareView to an image (optional sticker)
+//        let spotifyShareView = SpotifyShareView().frame(width: 300, height: 400)
+//        let stickerImage = spotifyShareView.snapshot()
+//        
+//        guard let stickerImageData = stickerImage.pngData() else {
+//            print("Failed to convert Spotify view to PNG data.")
+//            return
+//        }
+//        
+//        // Call method to share video with Spotify sticker to Facebook Stories
+//        backgroundVideoWithStickerToFacebookStories(backgroundVideoData: backgroundVideoData, stickerImageData: stickerImageData, appID: appIDString)
+//    }
 
     // Method to share video with Spotify sticker to Facebook Stories
     func backgroundVideoWithStickerToFacebookStories(backgroundVideoData: Data, stickerImageData: Data, appID: String) {
@@ -381,32 +600,69 @@ struct ContentView: View {
     }
     
     // ------------
-    
     func shareVideoWithSpotifyStickerToInstagramStories() {
-        // Identify your App ID
         let appIDString = "512742294571294"
         
-        // Identify your video content
-        guard let videoURL = Bundle.main.url(forResource: "sample", withExtension: "MOV"),
-              let backgroundVideoData = try? Data(contentsOf: videoURL) else {
-            print("Failed to find or load video file.")
+        // Identify your video and audio content
+        guard let videoURL = Bundle.main.url(forResource: "back-video", withExtension: "mp4"),
+              let audioURL = Bundle.main.url(forResource: "back-music", withExtension: "mp3") else {
+            print("Failed to find video or audio file.")
             return
         }
         
-        // Convert your SpotifyShareView to an image
-        let spotifyShareView = SpotifyShareView()
-            .frame(width: 300, height: 400)
-        
-        let stickerImage = spotifyShareView.snapshot()
-        
-        guard let stickerImageData = stickerImage.pngData() else {
-            print("Failed to convert Spotify view to PNG data.")
-            return
+        // Merge video and audio while keeping the video's original sound
+        mergeVideoAndAudio(videoUrl: videoURL, audioUrl: audioURL, shouldFlipHorizontally: false) { error, mergedVideoURL in
+            if let error = error {
+                print("Failed to merge video and audio: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let mergedVideoURL = mergedVideoURL,
+                  let backgroundVideoData = try? Data(contentsOf: mergedVideoURL) else {
+                print("Failed to load merged video.")
+                return
+            }
+            
+            // Convert your SpotifyShareView to an image (optional sticker)
+            let spotifyShareView = SpotifyShareView().frame(width: 300, height: 400)
+            let stickerImage = spotifyShareView.snapshot()
+            
+            guard let stickerImageData = stickerImage.pngData() else {
+                print("Failed to convert Spotify view to PNG data.")
+                return
+            }
+            
+            // Call method to share video with Spotify sticker to Instagram Stories
+            backgroundVideoWithStickerToStories(backgroundVideoData: backgroundVideoData, stickerImageData: stickerImageData, appID: appIDString)
         }
-        
-        // Call method to share video with Spotify sticker to Instagram Stories
-        backgroundVideoWithStickerToStories(backgroundVideoData: backgroundVideoData, stickerImageData: stickerImageData, appID: appIDString)
     }
+
+    // Normal Music
+//    func shareVideoWithSpotifyStickerToInstagramStories() {
+//        // Identify your App ID
+//        let appIDString = "512742294571294"
+//        
+//        // Identify your video content
+//        guard let videoURL = Bundle.main.url(forResource: "sample", withExtension: "MOV"),
+//              let backgroundVideoData = try? Data(contentsOf: videoURL) else {
+//            print("Failed to find or load video file.")
+//            return
+//        }
+//        
+//        // Convert your SpotifyShareView to an image
+//        let spotifyShareView = SpotifyShareView()
+//            .frame(width: 300, height: 400)
+//        
+//        let stickerImage = spotifyShareView.snapshot()
+//        
+//        guard let stickerImageData = stickerImage.pngData() else {
+//            print("Failed to convert Spotify view to PNG data.")
+//            return
+//        }
+//        
+//        // Call method to share video with Spotify sticker to Instagram Stories
+//        backgroundVideoWithStickerToStories(backgroundVideoData: backgroundVideoData, stickerImageData: stickerImageData, appID: appIDString)
+//    }
 
     // Method to share video with Spotify sticker to Instagram Stories
     func backgroundVideoWithStickerToStories(backgroundVideoData: Data, stickerImageData: Data, appID: String) {
